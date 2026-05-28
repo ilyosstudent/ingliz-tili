@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingliz tili — 3 oylik reja</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f9fa;color:#1a1a1a;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 24px;display:flex;align-items:center;gap:12px}
+.header h1{font-size:18px;font-weight:600;color:#1a1a1a}
+.header .sub{font-size:13px;color:#6b7280;margin-left:auto}
+.nav{display:flex;gap:8px;padding:16px 24px;background:#fff;border-bottom:1px solid #e5e7eb;flex-wrap:wrap}
+.nav-btn{padding:8px 18px;border:1px solid #d1d5db;border-radius:8px;background:transparent;cursor:pointer;font-size:13px;color:#6b7280;transition:all .15s}
+.nav-btn.active{background:#1d4ed8;color:#fff;border-color:#1d4ed8;font-weight:500}
+.nav-btn:hover:not(.active){background:#f3f4f6}
+.main{padding:24px;max-width:900px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+
+/* REJA */
+.month-tabs{display:flex;gap:8px;margin-bottom:20px}
+.mtab{padding:7px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#6b7280}
+.mtab.active{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd;font-weight:500}
+.month-title{font-size:18px;font-weight:600;margin-bottom:16px;color:#1a1a1a}
+.week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.wcard{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s}
+.wcard:hover{border-color:#93c5fd;background:#f0f7ff}
+.wcard .wn{font-size:11px;color:#9ca3af;margin-bottom:4px}
+.wcard .wt{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px}
+.wcard .topics{list-style:none}
+.wcard .topics li{font-size:12px;color:#6b7280;padding:3px 0;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:5px}
+.wcard .topics li::before{content:'';width:5px;height:5px;border-radius:50%;background:#93c5fd;flex-shrink:0}
+.daily-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px}
+.daily-box h3{font-size:15px;font-weight:600;margin-bottom:14px;color:#1a1a1a}
+.daily-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f3f4f6}
+.daily-row:last-child{border:none}
+.daily-row input[type=checkbox]{width:17px;height:17px;cursor:pointer;accent-color:#1d4ed8}
+.daily-row label{font-size:14px;color:#374151;cursor:pointer}
+.daily-row.done label{text-decoration:line-through;color:#9ca3af}
+.tag{font-size:11px;padding:2px 8px;border-radius:6px;background:#dbeafe;color:#1e40af;margin-left:6px}
+
+/* SO'ZLAR */
+.words-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.word-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all .15s;user-select:none}
+.word-card:hover{border-color:#93c5fd}
+.word-card.flipped{background:#f0fdf4;border-color:#86efac}
+.word-card .we{font-size:16px;font-weight:600;color:#1a1a1a}
+.word-card .wp{font-size:12px;color:#2563eb;margin-top:3px}
+.word-card .wu{font-size:13px;color:#15803d;margin-top:4px;display:none}
+.word-card.flipped .wu{display:block}
+.hint-text{font-size:12px;color:#9ca3af;margin-bottom:14px}
+
+/* GRAMMATIKA */
+.gram-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:14px}
+.gram-card .rule{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
+.gram-card .formula{font-family:monospace;font-size:13px;background:#f0f7ff;padding:10px 14px;border-radius:8px;color:#1d4ed8;margin-bottom:10px}
+.gram-card .ex{font-size:14px;color:#374151;padding:4px 0}
+.gram-card .ex span{color:#1d4ed8;font-weight:500}
+.fill-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:10px}
+.fill-q{font-size:15px;color:#1a1a1a;margin-bottom:10px}
+.fill-input{padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;width:200px;color:#1a1a1a}
+.fill-btn{margin-left:8px;padding:8px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#374151}
+.fill-btn:hover{background:#f3f4f6}
+.fill-res{font-size:13px;margin-top:8px}
+.fill-res.ok{color:#15803d}.fill-res.err{color:#dc2626}
+
+/* TEST */
+.score-row{display:flex;gap:12px;margin-bottom:20px}
+.scard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 20px}
+.scard .sl{font-size:12px;color:#6b7280}.scard .sv{font-size:24px;font-weight:600;color:#1a1a1a}
+.quiz-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:12px}
+.quiz-q{font-size:16px;font-weight:500;color:#1a1a1a;margin-bottom:16px}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qopt{padding:11px 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:14px;color:#1a1a1a;text-align:left;transition:all .15s}
+.qopt:hover:not(:disabled){background:#f3f4f6}
+.qopt.correct{background:#f0fdf4;border-color:#16a34a;color:#15803d}
+.qopt.wrong{background:#fef2f2;border-color:#dc2626;color:#dc2626}
+.qres{font-size:13px;margin-top:12px;padding:10px 14px;border-radius:8px}
+.qres.ok{background:#f0fdf4;color:#15803d}.qres.err{background:#fef2f2;color:#dc2626}
+.next-btn{margin-top:10px;padding:9px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#374151}
+.next-btn:hover{background:#f3f4f6}
+
+/* IBORALAR */
+.phrase-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:10px}
+.phrase-card .pe{font-size:17px;font-weight:600;color:#1a1a1a}
+.phrase-card .pp{font-size:13px;color:#2563eb;margin-top:3px}
+.phrase-card .pu{font-size:14px;color:#15803d;margin-top:4px;display:none}
+.phrase-card.show .pu{display:block}
+.show-btn{font-size:12px;color:#6b7280;cursor:pointer;background:none;border:none;padding:0;margin-top:8px}
+.show-btn:hover{color:#374151}
+
+/* ALIFBO */
+.alpha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-bottom:20px}
+.acard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.acard.vowel{background:#eff6ff;border-color:#bfdbfe}
+.acard.flipped{background:#f0fdf4;border-color:#86efac}
+.acard .al{font-size:20px;font-weight:600;color:#1a1a1a}
+.acard .ap{font-size:11px;color:#2563eb;margin-top:2px}
+.acard .aex{font-size:11px;color:#15803d;margin-top:2px;display:none}
+.acard.flipped .aex{display:block}
+.legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280}
+.leg-dot{width:12px;height:12px;border-radius:3px}
+
+.sec-label{font-size:17px;font-weight:600;color:#1a1a1a;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span style="font-size:22px">🇬🇧</span>
+  <h1>Ingliz tili — 3 oylik reja</h1>
+  <span class="sub">Kuniga 2 soat · Universitet uchun</span>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="goPage('reja')">📅 Reja</button>
+  <button class="nav-btn" onclick="goPage('alifbo')">🔤 Alifbo</button>
+  <button class="nav-btn" onclick="goPage('sozlar')">📖 So'zlar</button>
+  <button class="nav-btn" onclick="goPage('grammatika')">✏️ Grammatika</button>
+  <button class="nav-btn" onclick="goPage('iboralar')">💬 Iboralar</button>
+  <button class="nav-btn" onclick="goPage('test')">✅ Test</button>
+  <button class="nav-btn" onclick="goPage('kunlik')">📋 Kunlik</button>
+</div>
+
+<div class="main">
+
+<!-- REJA -->
+<div class="page active" id="page-reja">
+  <div class="month-tabs">
+    <button class="mtab active" onclick="showMonth(1,this)">1-oy</button>
+    <button class="mtab" onclick="showMonth(2,this)">2-oy</button>
+    <button class="mtab" onclick="showMonth(3,this)">3-oy</button>
+  </div>
+  <div id="month-body"></div>
+</div>
+
+<!-- ALIFBO -->
+<div class="page" id="page-alifbo">
+  <p class="sec-label">Ingliz alifbosi — 26 harf</p>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#bfdbfe"></div>Unli harf (vowel)</div>
+    <div class="leg"><div class="leg-dot" style="background:#e5e7eb"></div>Undosh harf (consonant)</div>
+  </div>
+  <p class="hint-text">Kartochkaga bosing — misol so'zni ko'ring</p>
+  <div class="alpha-grid" id="alpha-grid"></div>
+</div>
+
+<!-- SO'ZLAR -->
+<div class="page" id="page-sozlar">
+  <div class="month-tabs">
+    <button class="mtab active" onclick="showWords(1,this)">1-oy</button>
+    <button class="mtab" onclick="showWords(2,this)">2-oy</button>
+    <button class="mtab" onclick="showWords(3,this)">3-oy</button>
+  </div>
+  <p class="hint-text">Kartochkaga bosing — tarjima chiqadi</p>
+  <div class="words-grid" id="words-grid"></div>
+</div>
+
+<!-- GRAMMATIKA -->
+<div class="page" id="page-grammatika">
+  <div class="month-tabs">
+    <button class="mtab active" onclick="showGram(1,this)">1-oy</button>
+    <button class="mtab" onclick="showGram(2,this)">2-oy</button>
+    <button class="mtab" onclick="showGram(3,this)">3-oy</button>
+  </div>
+  <div id="gram-body"></div>
+</div>
+
+<!-- IBORALAR -->
+<div class="page" id="page-iboralar">
+  <p class="sec-label">Salomlashish iboralari</p>
+  <p class="hint-text">Har bir ibora ostidagi tugmaga bosing — tarjimani ko'ring</p>
+  <div id="phrase-list"></div>
+</div>
+
+<!-- TEST -->
+<div class="page" id="page-test">
+  <div class="score-row">
+    <div class="scard"><div class="sl">To'g'ri</div><div class="sv" id="sc-r">0</div></div>
+    <div class="scard"><div class="sl">Jami</div><div class="sv" id="sc-t">0</div></div>
+  </div>
+  <div id="quiz-body"></div>
+</div>
+
+<!-- KUNLIK -->
+<div class="page" id="page-kunlik">
+  <p class="sec-label">Bugungi vazifalar</p>
+  <div id="kunlik-body"></div>
+</div>
+
+</div>
+
+<script>
+const months={
+  1:{title:"1-OY — Asos (Foundation)",weeks:[
+    {n:1,t:"Alfabet va talaffuz",topics:["Ingliz alifbosi (26 harf)","Harflar talaffuzi","Unli va undosh tovushlar","Salomlashish iboralari"]},
+    {n:2,t:"Asosiy so'zlar",topics:["Sonlar 1-100","Ranglar (12 ta)","Kunlar va oylar","Oila a'zolari"]},
+    {n:3,t:"To be fe'li",topics:["I am / You are / He is","She is / We are / They are","Oddiy gaplar tuzish","Salbiy gaplar (I am not)"]},
+    {n:4,t:"Takrorlash",topics:["1-oy barcha mavzular","Kichik matn o'qish","O'zingiz haqida gaplashish","Mini test"]}
+  ]},
+  2:{title:"2-OY — Grammatika",weeks:[
+    {n:5,t:"Present Simple",topics:["Har kuni qiladigan ishlar","I work / She works","Do you work?","Salbiy: don't / doesn't"]},
+    {n:6,t:"Past Simple",topics:["O'tgan zamon — regular","Irregular fe'llar (go→went)","Did you...? — Yes/No","Oddiy hikoya yozish"]},
+    {n:7,t:"Future tense",topics:["Will + fe'l","Going to + fe'l","Savol tuzish (Will you?)","Reja va niyat bildirish"]},
+    {n:8,t:"Matn va yozish",topics:["Qisqa matn o'qish","Paragraf yozish","Bog'lovchi so'zlar","2-oy takrorlash"]}
+  ]},
+  3:{title:"3-OY — Amaliyot",weeks:[
+    {n:9,t:"Akademik so'zlar",topics:["Universitet so'z boyligi","Rasmiy va norasmiy uslub","Email yozish","Sarlavha va kirish qismi"]},
+    {n:10,t:"Reading",topics:["Matn tushunish","Asosiy fikrni topish","So'zlarni kontekstdan tushunish","Qisqa maqola tahlili"]},
+    {n:11,t:"Essay yozish",topics:["Kirish (introduction)","Asosiy qism (body)","Xulosa (conclusion)","IELTS essay strukturasi"]},
+    {n:12,t:"Yakuniy takrorlash",topics:["3 oy barcha mavzular","O'z darajangizni sinash","Kuchsiz tomonlarni aniqlash","Keyingi qadam: B1 daraja"]}
+  ]}
+};
+
+const wordData={
+  1:[
+    {e:"Hello",u:"Salom",p:"/həˈloʊ/"},{e:"Goodbye",u:"Xayr",p:"/ɡʊdˈbaɪ/"},{e:"Please",u:"Iltimos",p:"/pliːz/"},{e:"Thank you",u:"Rahmat",p:"/θæŋk juː/"},
+    {e:"Yes",u:"Ha",p:"/jɛs/"},{e:"No",u:"Yo'q",p:"/noʊ/"},{e:"Water",u:"Suv",p:"/ˈwɔːtər/"},{e:"Food",u:"Taom",p:"/fuːd/"},
+    {e:"House",u:"Uy",p:"/haʊs/"},{e:"School",u:"Maktab",p:"/skuːl/"},{e:"Book",u:"Kitob",p:"/bʊk/"},{e:"Friend",u:"Do'st",p:"/frɛnd/"},
+    {e:"Mother",u:"Ona",p:"/ˈmʌðər/"},{e:"Father",u:"Ota",p:"/ˈfɑːðər/"},{e:"Day",u:"Kun",p:"/deɪ/"},{e:"Night",u:"Kecha",p:"/naɪt/"}
+  ],
+  2:[
+    {e:"Study",u:"O'qimoq",p:"/ˈstʌdi/"},{e:"Work",u:"Ishlash",p:"/wɜːrk/"},{e:"Understand",u:"Tushunmoq",p:"/ˌʌndərˈstænd/"},{e:"Important",u:"Muhim",p:"/ɪmˈpɔːrtənt/"},
+    {e:"Because",u:"Chunki",p:"/bɪˈkɒz/"},{e:"Always",u:"Har doim",p:"/ˈɔːlweɪz/"},{e:"Sometimes",u:"Ba'zan",p:"/ˈsʌmtaɪmz/"},{e:"Never",u:"Hech qachon",p:"/ˈnɛvər/"},
+    {e:"Problem",u:"Muammo",p:"/ˈprɒbləm/"},{e:"Answer",u:"Javob",p:"/ˈɑːnsər/"},{e:"Question",u:"Savol",p:"/ˈkwɛstʃən/"},{e:"Listen",u:"Eshitmoq",p:"/ˈlɪsən/"},
+    {e:"Write",u:"Yozmoq",p:"/raɪt/"},{e:"Read",u:"O'qimoq",p:"/riːd/"},{e:"Speak",u:"Gapirmoq",p:"/spiːk/"},{e:"Learn",u:"O'rganmoq",p:"/lɜːrn/"}
+  ],
+  3:[
+    {e:"Research",u:"Tadqiqot",p:"/rɪˈsɜːrtʃ/"},{e:"Describe",u:"Tasvirlash",p:"/dɪˈskraɪb/"},{e:"Explain",u:"Tushuntirmoq",p:"/ɪkˈspleɪn/"},{e:"Analyse",u:"Tahlil qilish",p:"/ˈænəlaɪz/"},
+    {e:"Conclude",u:"Xulosa chiqarish",p:"/kənˈkluːd/"},{e:"Evidence",u:"Dalil",p:"/ˈɛvɪdəns/"},{e:"Argue",u:"Dalil keltirmoq",p:"/ˈɑːrɡjuː/"},{e:"Compare",u:"Solishtirmoq",p:"/kəmˈpɛr/"},
+    {e:"Define",u:"Ta'riflash",p:"/dɪˈfaɪn/"},{e:"Evaluate",u:"Baholash",p:"/ɪˈvæljueɪt/"},{e:"Significant",u:"Muhim/sezilarli",p:"/sɪɡˈnɪfɪkənt/"},{e:"Therefore",u:"Shuning uchun",p:"/ˈðɛrfɔːr/"},
+    {e:"However",u:"Biroq",p:"/haʊˈɛvər/"},{e:"Furthermore",u:"Bundan tashqari",p:"/ˌfɜːrðərˈmɔːr/"},{e:"Whereas",u:"Holbuki",p:"/wɛrˈæz/"},{e:"Contribute",u:"Hissa qo'shmoq",p:"/kənˈtrɪbjuːt/"}
+  ]
+};
+
+const gramData={
+  1:[
+    {rule:"To be — hozirgi zamon",formula:"I am / You are / He-She-It is / We-They are",exs:["I am a student.","She is from Tashkent.","They are happy."],
+     fills:[{q:"___ am a student.",ans:"I"},{q:"She ___ from Tashkent.",ans:"is"},{q:"They ___ happy.",ans:"are"}]},
+    {rule:"Salbiy gaplar (To be)",formula:"Subject + am/is/are + not",exs:["I am not tired.","He is not a doctor.","We are not late."],
+     fills:[{q:"I am ___ tired.",ans:"not"},{q:"He ___ not a doctor.",ans:"is"},{q:"We are ___ late.",ans:"not"}]},
+    {rule:"Savol tuzish (To be)",formula:"Am/Is/Are + Subject + ...?",exs:["Are you a student?","Is she your friend?","Are they ready?"],
+     fills:[{q:"___ you a student?",ans:"Are"},{q:"___ she your friend?",ans:"Is"},{q:"Are they ___?",ans:"ready"}]}
+  ],
+  2:[
+    {rule:"Present Simple",formula:"I/You/We/They + V1 | He/She/It + V1+s",exs:["I study every day.","She works in Tashkent.","They play football."],
+     fills:[{q:"I ___ every day. (study)",ans:"study"},{q:"She ___ in Tashkent. (work)",ans:"works"},{q:"They ___ football. (play)",ans:"play"}]},
+    {rule:"Past Simple (regular)",formula:"Subject + V2 (verb+ed)",exs:["I studied yesterday.","She worked last week.","They played yesterday."],
+     fills:[{q:"I ___ yesterday. (study)",ans:"studied"},{q:"She ___ last week. (work)",ans:"worked"},{q:"They ___ yesterday. (play)",ans:"played"}]},
+    {rule:"Future — Will",formula:"Subject + will + V1",exs:["I will study tomorrow.","She will call you.","They will arrive soon."],
+     fills:[{q:"I ___ study tomorrow.",ans:"will"},{q:"She will ___ you. (call)",ans:"call"},{q:"They will ___ soon. (arrive)",ans:"arrive"}]}
+  ],
+  3:[
+    {rule:"Present Perfect",formula:"Subject + have/has + V3",exs:["I have studied English.","She has written the essay.","They have finished the exam."],
+     fills:[{q:"I ___ studied English.",ans:"have"},{q:"She ___ written the essay.",ans:"has"},{q:"They have ___ the exam. (finish)",ans:"finished"}]},
+    {rule:"Passive voice",formula:"Subject + am/is/are + V3",exs:["English is spoken worldwide.","The book was written in 1990.","The exam was passed."],
+     fills:[{q:"English ___ spoken worldwide.",ans:"is"},{q:"The book ___ written in 1990.",ans:"was"},{q:"The exam was ___. (pass)",ans:"passed"}]},
+    {rule:"Conditional (if)",formula:"If + Present Simple, will + V1",exs:["If I study hard, I will pass.","If she reads more, she will improve.","If you practice, you will succeed."],
+     fills:[{q:"If I study hard, I ___ pass.",ans:"will"},{q:"If she reads more, she will ___. (improve)",ans:"improve"},{q:"If you ___, you will succeed. (practice)",ans:"practice"}]}
+  ]
+};
+
+const phrases=[
+  {e:"Hello!",p:"/həˈloʊ/",u:"Salom!"},{e:"Good morning!",p:"/ɡʊd ˈmɔːrnɪŋ/",u:"Xayrli tong!"},
+  {e:"Good afternoon!",p:"/ɡʊd ˌæftərˈnuːn/",u:"Xayrli kun!"},{e:"Good evening!",p:"/ɡʊd ˈiːvnɪŋ/",u:"Xayrli kech!"},
+  {e:"Good night!",p:"/ɡʊd naɪt/",u:"Xayrli tun!"},{e:"Goodbye!",p:"/ɡʊdˈbaɪ/",u:"Xayr!"},
+  {e:"How are you?",p:"/haʊ ɑːr juː/",u:"Qaleysan? / Yaxshimisiz?"},{e:"I am fine, thank you.",p:"/aɪ æm faɪn θæŋk juː/",u:"Yaxshiman, rahmat."},
+  {e:"My name is ...",p:"/maɪ neɪm ɪz/",u:"Mening ismim ..."},{e:"Nice to meet you!",p:"/naɪs tə miːt juː/",u:"Tanishganimdan xursandman!"},
+  {e:"See you later!",p:"/siː juː ˈleɪtər/",u:"Keyin ko'rishamiz!"},{e:"Please",p:"/pliːz/",u:"Iltimos"},
+  {e:"Thank you!",p:"/θæŋk juː/",u:"Rahmat!"},{e:"You're welcome!",p:"/jʊər ˈwɛlkəm/",u:"Arzimaydi!"},
+  {e:"Sorry!",p:"/ˈsɒri/",u:"Kechirasiz!"}
+];
+
+const letters=[
+  {l:"A",p:"/eɪ/",ex:"Apple"},{l:"B",p:"/biː/",ex:"Book"},{l:"C",p:"/siː/",ex:"Cat"},{l:"D",p:"/diː/",ex:"Dog"},
+  {l:"E",p:"/iː/",ex:"Egg"},{l:"F",p:"/ɛf/",ex:"Fish"},{l:"G",p:"/dʒiː/",ex:"Girl"},{l:"H",p:"/eɪtʃ/",ex:"House"},
+  {l:"I",p:"/aɪ/",ex:"Ice"},{l:"J",p:"/dʒeɪ/",ex:"Juice"},{l:"K",p:"/keɪ/",ex:"Key"},{l:"L",p:"/ɛl/",ex:"Lion"},
+  {l:"M",p:"/ɛm/",ex:"Map"},{l:"N",p:"/ɛn/",ex:"Name"},{l:"O",p:"/oʊ/",ex:"Open"},{l:"P",p:"/piː/",ex:"Pen"},
+  {l:"Q",p:"/kjuː/",ex:"Queen"},{l:"R",p:"/ɑːr/",ex:"Rain"},{l:"S",p:"/ɛs/",ex:"Sun"},{l:"T",p:"/tiː/",ex:"Table"},
+  {l:"U",p:"/juː/",ex:"Under"},{l:"V",p:"/viː/",ex:"Voice"},{l:"W",p:"/ˈdʌbəljuː/",ex:"Water"},{l:"X",p:"/ɛks/",ex:"Box"},
+  {l:"Y",p:"/waɪ/",ex:"Year"},{l:"Z",p:"/ziː/",ex:"Zoo"}
+];
+const vowels=new Set(['A','E','I','O','U']);
+
+const quizBank=[
+  {q:"'Kitob' inglizcha nima?",opts:["Book","Cook","Look","Hook"],ans:0},
+  {q:"'I ___ a student.' bo'sh joyga nima?",opts:["is","am","are","be"],ans:1},
+  {q:"'She ___ every day.' (work)",opts:["work","works","worked","working"],ans:1},
+  {q:"'Yesterday' qaysi zamonni bildiradi?",opts:["Present","Future","Past","Perfect"],ans:2},
+  {q:"'O'rganmoq' inglizcha nima?",opts:["Listen","Speak","Learn","Write"],ans:2},
+  {q:"'She is not tired.' — bu qanday gap?",opts:["Savol","Salbiy","Tasdiq","Buyruq"],ans:1},
+  {q:"'Thank you' nima degani?",opts:["Salom","Xayr","Iltimos","Rahmat"],ans:3},
+  {q:"Future tense uchun qaysi so'z?",opts:["Did","Does","Will","Was"],ans:2},
+  {q:"'I ___ studying now.'",opts:["am","is","are","be"],ans:0},
+  {q:"Ingliz alifbosida nechta harf?",opts:["24","25","26","28"],ans:2},
+  {q:"'Good morning!' nima degani?",opts:["Xayrli tun","Xayrli tong","Xayrli kech","Xayrli kun"],ans:1},
+  {q:"'H' harfi qanday aytiladi?",opts:["/hiː/","/eɪtʃ/","/hɛ/","/aɪtʃ/"],ans:1},
+  {q:"Qaysi harf unli (vowel)?",opts:["B","T","O","S"],ans:2},
+  {q:"'Nice to meet you!' nima degani?",opts:["Kechirasiz","Ko'rishguncha","Tanishganimdan xursandman","Yaxshiman"],ans:2},
+  {q:"Past Simple yasash uchun nima qo'shiladi?",opts:["-ing","-ed","-s","-er"],ans:1}
+];
+
+const kunlikTasks=[
+  {id:"k1",text:"YouTube dan 1-2 ta video ko'rish (45 daq)",tag:"Asosiy"},
+  {id:"k2",text:"10 ta yangi so'z yodlash",tag:"So'z"},
+  {id:"k3",text:"So'zlarni ovoz chiqarib takrorlash (15 daq)",tag:"Talaffuz"},
+  {id:"k4",text:"5 ta gap yozish (o'rgangan mavzuda)",tag:"Yozish"},
+  {id:"k5",text:"Kecha o'rgangan so'zlarni qaytarish",tag:"Takror"},
+  {id:"k6",text:"Test sahifasidan 5 ta savol yechish",tag:"Test"}
+];
+
+let curMonth=1,curWordMonth=1,curGramMonth=1;
+let qIdx=0,qRight=0,qTotal=0,qAnswered=false;
+let checked={};
+
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='test')renderQuiz();
+  if(id==='kunlik')renderKunlik();
+}
+
+function showMonth(m,btn){
+  curMonth=m;
+  document.querySelectorAll('#page-reja .mtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMonth();
+}
+function renderMonth(){
+  const md=months[curMonth];
+  let h=`<p class="month-title">${md.title}</p><div class="week-grid">`;
+  md.weeks.forEach(w=>{
+    h+=`<div class="wcard"><div class="wn">${w.n}-hafta</div><div class="wt">${w.t}</div><ul class="topics">`;
+    w.topics.forEach(t=>h+=`<li>${t}</li>`);
+    h+=`</ul></div>`;
+  });
+  h+=`</div>`;
+  h+=`<div class="daily-box"><h3>Kunlik tartib (2 soat)</h3>`;
+  const daily=[
+    {t:"YouTube video (1-2 ta)",d:"45 daqiqa"},
+    {t:"Yangi so'zlar yodlash",d:"30 daqiqa"},
+    {t:"Ovoz chiqarib takrorlash",d:"30 daqiqa"},
+    {t:"Kichik mashq yozish",d:"15 daqiqa"}
+  ];
+  daily.forEach(d=>h+=`<div class="daily-row"><span style="font-size:14px;color:#374151">⏱ ${d.d}</span><span style="margin-left:12px;font-size:14px;color:#1a1a1a">${d.t}</span></div>`);
+  h+=`</div>`;
+  document.getElementById('month-body').innerHTML=h;
+}
+
+function buildAlpha(){
+  document.getElementById('alpha-grid').innerHTML=letters.map((l,i)=>
+    `<div class="acard${vowels.has(l.l)?' vowel':''}" onclick="this.classList.toggle('flipped')">
+      <div class="al">${l.l} ${l.l.toLowerCase()}</div>
+      <div class="ap">${l.p}</div>
+      <div class="aex">${l.ex}</div>
+    </div>`).join('');
+}
+
+function showWords(m,btn){
+  curWordMonth=m;
+  document.querySelectorAll('#page-sozlar .mtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWords();
+}
+function renderWords(){
+  document.getElementById('words-grid').innerHTML=wordData[curWordMonth].map(w=>
+    `<div class="word-card" onclick="this.classList.toggle('flipped')">
+      <div class="we">${w.e}</div>
+      <div class="wp">${w.p}</div>
+      <div class="wu">${w.u}</div>
+    </div>`).join('');
+}
+
+function showGram(m,btn){
+  curGramMonth=m;
+  document.querySelectorAll('#page-grammatika .mtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGram();
+}
+function renderGram(){
+  let h='';
+  gramData[curGramMonth].forEach((r,ri)=>{
+    h+=`<div class="gram-card"><div class="rule">${r.rule}</div><div class="formula">${r.formula}</div>`;
+    r.exs.forEach(e=>h+=`<div class="ex"><span>${e}</span></div>`);
+    h+=`</div>`;
+    r.fills.forEach((f,fi)=>{
+      h+=`<div class="fill-card"><div class="fill-q">${f.q}</div>
+        <input class="fill-input" id="fi${ri}_${fi}" placeholder="javob yozing">
+        <button class="fill-btn" onclick="chkFill(${ri},${fi},'${f.ans}')">Tekshir</button>
+        <div class="fill-res" id="fr${ri}_${fi}"></div>
+      </div>`;
+    });
+  });
+  document.getElementById('gram-body').innerHTML=h;
+}
+
+function chkFill(ri,fi,ans){
+  const v=document.getElementById(`fi${ri}_${fi}`).value.trim().toLowerCase();
+  const r=document.getElementById(`fr${ri}_${fi}`);
+  const inp=document.getElementById(`fi${ri}_${fi}`);
+  if(v===ans.toLowerCase()){r.className='fill-res ok';r.textContent="To'g'ri! ✓";inp.style.borderColor='#16a34a';}
+  else{r.className='fill-res err';r.textContent=`Noto'g'ri. To'g'ri javob: "${ans}"`;inp.style.borderColor='#dc2626';}
+}
+
+function buildPhrases(){
+  document.getElementById('phrase-list').innerHTML=phrases.map((p,i)=>
+    `<div class="phrase-card" id="pc${i}">
+      <div class="pe">${p.e}</div>
+      <div class="pp">${p.p}</div>
+      <div class="pu">${p.u}</div>
+      <button class="show-btn" onclick="document.getElementById('pc${i}').classList.toggle('show')">Tarjimani ko'rsatish / yashirish</button>
+    </div>`).join('');
+}
+
+function renderQuiz(){
+  document.getElementById('sc-r').textContent=qRight;
+  document.getElementById('sc-t').textContent=qTotal;
+  const q=quizBank[qIdx%quizBank.length];
+  qAnswered=false;
+  document.getElementById('quiz-body').innerHTML=`
+    <div class="quiz-box">
+      <div class="quiz-q">
+        <span style="font-size:12px;color:#9ca3af">${(qIdx%quizBank.length)+1} / ${quizBank.length}</span><br><br>
+        ${q.q}
+        <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="qopt" id="qo${i}" onclick="ansQ(${i})">${o}</button>`).join('')}</div>
+        <div id="qres" style="display:none" class="qres"></div>
+        <button id="qnxt" class="next-btn" style="display:none" onclick="nextQ()">Keyingi savol →</button>
+      </div>
+    </div>`;
+}
+
+function ansQ(i){
+  if(qAnswered)return;
+  qAnswered=true;qTotal++;
+  const q=quizBank[qIdx%quizBank.length];
+  document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
+  document.getElementById('qo'+q.ans).classList.add('correct');
+  const res=document.getElementById('qres');
+  if(i===q.ans){qRight++;res.className='qres ok';res.textContent="To'g'ri! Barakalla! ✓";}
+  else{document.getElementById('qo'+i).classList.add('wrong');res.className='qres err';res.textContent=`Noto'g'ri. To'g'ri: "${q.opts[q.ans]}"`;}
+  res.style.display='block';
+  document.getElementById('qnxt').style.display='inline-block';
+  document.getElementById('sc-r').textContent=qRight;
+  document.getElementById('sc-t').textContent=qTotal;
+}
+
+function nextQ(){qIdx++;renderQuiz();}
+
+function renderKunlik(){
+  let h='';
+  kunlikTasks.forEach(t=>{
+    const done=checked[t.id];
+    h+=`<div class="daily-row${done?' done':''}" id="kr${t.id}">
+      <input type="checkbox" id="cb${t.id}" ${done?'checked':''} onchange="togTask('${t.id}')">
+      <label for="cb${t.id}">${t.text} <span class="tag">${t.tag}</span></label>
+    </div>`;
+  });
+  const done=Object.values(checked).filter(Boolean).length;
+  h+=`<div style="margin-top:20px;background:#f9fafb;border-radius:10px;padding:14px">
+    <div style="font-size:14px;color:#374151">Bajarildi: <strong>${done} / ${kunlikTasks.length}</strong></div>
+    <div style="margin-top:8px;background:#e5e7eb;border-radius:4px;height:8px">
+      <div style="background:#1d4ed8;height:100%;border-radius:4px;width:${Math.round(done/kunlikTasks.length*100)}%;transition:width .3s"></div>
+    </div>
+  </div>`;
+  document.getElementById('kunlik-body').innerHTML=h;
+}
+
+function togTask(id){
+  checked[id]=!checked[id];
+  renderKunlik();
+}
+
+renderMonth();
+buildAlpha();
+renderWords();
+renderGram();
+buildPhrases();
+</script>
+</body>
+</html>
